@@ -92,21 +92,24 @@ task functionalTests(type: YarnTask) {
     project.ext.originalNpmVersion = project.node.npmVersion
     project.ext.originalYarnVersion = project.node.yarnVersion
 
-    project.node.version = functionalNodeVersion
-    project.node.npmVersion = functionalNpmVersion
-    project.node.yarnVersion = functionalYarnVersion
+    node {
+      version = functionalNodeVersion
+      npmVersion = functionalNpmVersion
+      yarnVersion = functionalYarnVersion
+      download = true
+    }
 
-    project.node.download = true
   }
 
   yarnCommand = ["functional"]
 
   doLast {
-    project.node.version = project.ext.originalNodeVersion
-    project.node.npmVersion = project.ext.originalNpmVersion
-    project.node.yarnVersion = project.ext.originalYarnVersion
-
-    project.node.download = true
+    node {
+      version = project.ext.originalNodeVersion
+      npmVersion = project.ext.originalNpmVersion
+      yarnVersion = project.ext.originalYarnVersion
+      download = true
+    }
   }
 
   if (project.hasProperty('skipTests')) {
