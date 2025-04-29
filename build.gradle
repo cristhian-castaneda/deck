@@ -11,14 +11,13 @@ plugins {
 group = "com.netflix.spinnaker.deck"
 apply plugin: "nebula.ospackage"
 
-node {
-    // Pulls node and npm versions from package.json.
-    def packageSlurper = new JsonSlurper()
-    def packageJson = packageSlurper.parse file('package.json')
+// Pulls node and npm versions from package.json.
+def rootVersions = getPackageVersions(file('package.json'))
 
-    version = packageJson.engines.node.replaceAll(/[^\d\.]/, '')
-    npmVersion = packageJson.engines.npm.replaceAll(/[^\d\.]/, '')
-    yarnVersion = packageJson.engines.yarn.replaceAll(/[^\d\.]/, '')
+node {
+    version = rootVersions.node
+    npmVersion = rootVersions.npm
+    yarnVersion = rootVersions.yarn
 
     // Enabled the automatic download. False is the default (for now).
     download = true
@@ -82,19 +81,25 @@ task functionalTests(type: YarnTask) {
   dependsOn "modules"
   dependsOn "karma"
 
-  def functionalPackageJson = new JsonSlurper().parse(file('test/functional/package.json'))
-  def functionalNodeVersion = functionalPackageJson.engines.node.replaceAll(/[^\d\.]/, '')
-  def functionalNpmVersion = functionalPackageJson.engines.npm.replaceAll(/[^\d\.]/, '')
-  def functionalYarnVersion = functionalPackageJson.engines.yarn.replaceAll(/[^\d\.]/, '')
+  // Load versions from test/functional/package.json
+  def testVersions = getPackageVersions(file('test/functional/package.json'))
+  doFirst {
+    project.node.version = testVersions.node
+    project.node.npmVersion = testVersions.npm
+    project.node.yarnVersion = testVersions.yarn
+    project.node.download = true
+  }
 
-  nodeVersion = functionalNodeVersion
-  npmVersion = functionalNpmVersion
-  yarnVersion = functionalYarnVersion
+  doLast {
+    yarnCommand = ["functional"]
 
-  yarnCommand = ["functional"]
-
-  if (project.hasProperty('skipTests')) {
-    functionalTests.enabled = false
+    if (project.hasProperty('skipTests')) {
+      functionalTests.enabled = false
+    }
+    // Reset versions to root package.json versions
+    project.node.version = rootVersions.node
+    project.node.npmVersion = rootVersions.npm
+    project.node.yarnVersion = rootVersions.yarn
   }
 }
 
@@ -144,6 +149,16 @@ yarn.dependsOn 'generateVersionFile'
 buildDeb.dependsOn 'copyFavicon'
 buildRpm.dependsOn 'webpack'
 build.dependsOn 'buildDeb'
+
+getPackageVersions(File packageFile) {
+  def packageSlurper = new JsonSlurper()
+  def packageJson = packageSlurper.parse(packageFile)
+  return [
+    node: packageJson.engines.node.replaceAll(/[^\d\.]/, ''),
+    npm: packageJson.engines.npm.replaceAll(/[^\d\.]/, ''),
+    yarn: packageJson.engines.yarn.replaceAll(/[^\d\.]/, '')
+  ]
+}
 
 String toVers(String v) {
   int idx = v.indexOf('-')
