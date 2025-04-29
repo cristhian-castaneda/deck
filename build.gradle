@@ -87,30 +87,11 @@ task functionalTests(type: YarnTask) {
   def functionalNpmVersion = functionalPackageJson.engines.npm.replaceAll(/[^\d\.]/, '')
   def functionalYarnVersion = functionalPackageJson.engines.yarn.replaceAll(/[^\d\.]/, '')
 
-  doFirst {
-    project.ext.originalNodeVersion = project.node.version
-    project.ext.originalNpmVersion = project.node.npmVersion
-    project.ext.originalYarnVersion = project.node.yarnVersion
-
-    node {
-      version = functionalNodeVersion
-      npmVersion = functionalNpmVersion
-      yarnVersion = functionalYarnVersion
-      download = true
-    }
-
-  }
+  nodeVersion = functionalNodeVersion
+  npmVersion = functionalNpmVersion
+  yarnVersion = functionalYarnVersion
 
   yarnCommand = ["functional"]
-
-  doLast {
-    node {
-      version = project.ext.originalNodeVersion
-      npmVersion = project.ext.originalNpmVersion
-      yarnVersion = project.ext.originalYarnVersion
-      download = true
-    }
-  }
 
   if (project.hasProperty('skipTests')) {
     functionalTests.enabled = false
