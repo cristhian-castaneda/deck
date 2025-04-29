@@ -87,8 +87,9 @@ task functionalTests(type: YarnTask) {
     project.node.version = testVersions.node
     project.node.npmVersion = testVersions.npm
     project.node.yarnVersion = testVersions.yarn
-    tasks.nodeSetup.execute()
-    tasks.yarnSetup.execute()
+    tasks.register(':publish')
+    tasks.nodeSetup
+    tasks.yarnSetup
   }
 
   doLast {
