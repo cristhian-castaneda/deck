@@ -77,41 +77,32 @@ task karma(type: YarnTask) {
   }
 }
 
-// 1) Pull in your functional‐test package.json engines block at configuration time
-def testVersions = getPackageVersions(file('test/functional/package.json'))
-
-// 2) Define a dedicated NodeSetup for functional tests
-task functionalNodeSetup(type: NodeSetup) {
-  group       = 'verification'
-  description = 'Download Node at the functional‐test versions'
-  version     = testVersions.node
-  npmVersion  = testVersions.npm
-  yarnVersion = testVersions.yarn
-  download    = true
-}
-
-// 3) Define a dedicated YarnSetup that depends on that
-task functionalYarnSetup(type: YarnSetup) {
-  group       = 'verification'
-  description = 'Install Yarn for functional tests'
-  dependsOn   = [functionalNodeSetup]
-  yarnVersion = testVersions.yarn
-  download    = true
-}
-
 task functionalTests(type: YarnTask) {
-  // remove the default YarnSetup → NodeSetup chain
-  setDependsOn(dependsOn.filter { it.name != 'yarnSetup' })
-  // wire in your new setup + existing modules & karma
-  dependsOn functionalYarnSetup, 'modules', 'karma'
+  dependsOn "modules"
+  dependsOn "karma"
 
-  yarnCommand = ["functional"]
+  // Load versions from test/functional/package.json
+  def testVersions = getPackageVersions(file('test/functional/package.json'))
+  doFirst {
+    project.node.version = testVersions.node
+    project.node.npmVersion = testVersions.npm
+    project.node.yarnVersion = testVersions.yarn
+    tasks.nodeSetup.execute()
+    tasks.yarnSetup.execute()
+  }
 
-  if (project.hasProperty('skipTests')) {
-    functionalTests.enabled = false
+  doLast {
+    yarnCommand = ["functional"]
+
+    if (project.hasProperty('skipTests')) {
+      functionalTests.enabled = false
+    }
+    // Reset versions to root package.json versions
+    project.node.version = rootVersions.node
+    project.node.npmVersion = rootVersions.npm
+    project.node.yarnVersion = rootVersions.yarn
   }
 }
-
 
 project.tasks.register('test') {
   dependsOn 'karma'
