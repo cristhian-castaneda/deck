@@ -178,8 +178,8 @@ String toRelease(String v) {
 
 ospackage {
   packageName = "spinnaker-deck"
-  version = toVers(project.version.toString())
-  release toRelease(project.version.toString())
+  version = "1.2.3"
+  release = "1"
   into "/opt/deck/html"
   from "build/webpack"
   os = LINUX
