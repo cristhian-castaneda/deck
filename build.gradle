@@ -150,7 +150,7 @@ buildDeb.dependsOn 'copyFavicon'
 buildRpm.dependsOn 'webpack'
 build.dependsOn 'buildDeb'
 
-getPackageVersions(File packageFile) {
+def getPackageVersions(File packageFile) {
   def packageSlurper = new JsonSlurper()
   def packageJson = packageSlurper.parse(packageFile)
   return [
