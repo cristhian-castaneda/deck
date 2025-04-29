@@ -88,6 +88,7 @@ task functionalTests(type: YarnTask) {
     project.node.npmVersion = testVersions.npm
     project.node.yarnVersion = testVersions.yarn
     project.node.download = true
+    dependsOn "nodeSetup"
   }
 
   doLast {
