@@ -17,7 +17,6 @@
   "license": "Apache 2.0",
   "devDependencies": {
     "@cypress/code-coverage": "^3.14.0",
-    "@types/express": "^5.0.1",
     "concurrently": "8.2.2",
     "cypress": "12.17.4",
     "start-server-and-test": "2.0.0",
