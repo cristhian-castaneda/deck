@@ -84,6 +84,7 @@ task functionalTests(type: YarnTask) {
   // Load versions from test/functional/package.json
   def testVersions = getPackageVersions(file('test/functional/package.json'))
   doFirst {
+    delete '.gradle/nodejs'
     project.node.version = testVersions.node
     project.node.npmVersion = testVersions.npm
     project.node.yarnVersion = testVersions.yarn
