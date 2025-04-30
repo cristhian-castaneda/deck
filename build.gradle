@@ -79,21 +79,10 @@ task karma(type: YarnTask) {
 
 task functionalTests(type: YarnTask) {
   dependsOn "modules"
-  // Load versions from test/functional/package.json
-  def testVersions = getPackageVersions(file('test/functional/package.json'))
   project.node.version = testVersions.node
   project.node.npmVersion = testVersions.npm
   project.node.yarnVersion = testVersions.yarn
-  dependsOn "nodeSetup"
-//  dependsOn "karma"
-
-  doFirst {
-//    task(':publish')
-//    project.tasks.named('nodeSetup').apply()
-//    tasks.nodeSetup
-//    tasks.yarnSetup
-  }
-
+  mustRunAfter("setupNode")
   doLast {
     yarnCommand = ["functional"]
 
