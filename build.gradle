@@ -89,7 +89,7 @@ task functionalTests(type: YarnTask) {
     project.node.npmVersion = testVersions.npm
     project.node.yarnVersion = testVersions.yarn
 //    task(':publish')
-    project.tasks.named('nodeSetup').get().exec()
+    project.tasks.named('nodeSetup').execute()
 //    tasks.nodeSetup
 //    tasks.yarnSetup
   }
