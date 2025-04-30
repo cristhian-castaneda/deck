@@ -3,8 +3,9 @@ name: Branch Build
 on:
   push:
     branches:
-    - master
-    - release-*
+      - master
+      - release-*
+      - test/chore/upgrade_typescript
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx2g -Xms2g
@@ -17,7 +18,7 @@ permissions:
 jobs:
   branch-build:
     # Only run this on repositories in the 'spinnaker' org, not on forks.
-    if: startsWith(github.repository, 'spinnaker/')
+    if: startsWith(github.repository, 'cristhian-castaneda/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
