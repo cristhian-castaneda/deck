@@ -14,7 +14,7 @@ interface IUndoRolloutCommand {
   revision: number;
 }
 
-export interface IRolloutRevision {
+interface IRolloutRevision {
   label: string;
   revision: number;
 }

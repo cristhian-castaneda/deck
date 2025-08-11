@@ -14,10 +14,11 @@ import {
   SpinFormik,
   TaskMonitorWrapper,
   UserVerification,
-  useTaskMonitor,
   ValidationMessage,
 } from '@spinnaker/core';
 import type { ITitusServerGroup } from '../../../domain';
+
+import { useTaskMonitor } from './useTaskMonitor';
 
 const { useState, useEffect, useMemo } = React;
 
